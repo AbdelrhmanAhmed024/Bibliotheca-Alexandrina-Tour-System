@@ -56,20 +56,6 @@ Client feedback about a tour or a tour guide.
 
 ---
 
-## 🗂️ Project Structure (Backend)
-
-/backend
-├── controllers/
-├── models/
-├── routes/
-├── middlewares/
-├── utils/
-├── config/
-├── server.js
-└── app.js
-
----
-
 ## 🛡️ Authentication & Permissions
 
 The system uses **JWT-based authentication** and middleware for **role-based access control**, ensuring each user only accesses allowed features.
