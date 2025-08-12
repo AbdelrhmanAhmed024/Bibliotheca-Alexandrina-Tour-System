@@ -29,6 +29,12 @@ userSchema.virtual('age').get(function () {
     return null;
 });
 
+userSchema.pre('save', function (next) {
+    if (!this.isModified('password') || this.isNew) return next();
+    this.passwordChangedAt = new Date(Date.now() - 1000);
+    next();
+});
+
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;
