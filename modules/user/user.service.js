@@ -28,6 +28,7 @@ class UserService {
         if (!user) throw new AppError("Couldn't find user with that id.", 404);
         return user;
     };
+
     async updateUser(id, data) {
         const user = await userRepo.updateById(id, data);
         if (!user) throw new AppError("Couldn't update user with that id.", 404);
