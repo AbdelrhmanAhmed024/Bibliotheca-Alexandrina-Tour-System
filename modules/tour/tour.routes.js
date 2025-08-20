@@ -1,6 +1,5 @@
 const express = require('express')
 const tourController = require('./tour.controller')
-
 const router = express.Router();
 
 router.route('/')
