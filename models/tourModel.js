@@ -5,6 +5,20 @@ const tourSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    category: {
+        type: String,
+        required: true,
+        enum: ['Historical', 'Cultural', 'Educational', 'Special Exhibition', 'Architecture']
+    },
+    tags: [{
+        type: String,
+        enum: [
+            'Ancient Egypt', 'Manuscripts', 'Art Gallery',
+            'Digital Archives', 'Library Tour', 'Research Facilities',
+            'Planetarium', 'Science Museum', 'Antiquities',
+            'Modern History', 'Workshops', 'Interactive'
+        ]
+    }],
     description: {
         type: String,
         required: true
@@ -41,6 +55,15 @@ const tourSchema = new mongoose.Schema({
         default: 0,
         min: 0
     },
+    currentBookings: {
+        type: Number,
+        default: 0,
+        min: 0
+    },
+    bookedBy: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Visitor"
+    }]
 }, {
     timestamps: true,
     toJSON: { virtuals: true },
