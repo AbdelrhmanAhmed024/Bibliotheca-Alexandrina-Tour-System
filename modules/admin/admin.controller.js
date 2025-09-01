@@ -6,6 +6,7 @@ class AdminController {
             const admins = await adminService.getAllAdmins();
             res.status(200).json({
                 status: 'success',
+                results: admins.length,
                 data: {
                     admins
                 }
@@ -45,6 +46,14 @@ class AdminController {
 
     updateAdmin = async (req, res, next) => {
         try {
+            // Add a message to inform about password updates not being allowed
+            if (req.body.password) {
+                return res.status(400).json({
+                    status: 'fail',
+                    message: 'This route is not for password updates.'
+                });
+            }
+
             const admin = await adminService.updateAdmin(req.params.id, req.body);
             res.status(200).json({
                 status: 'success',

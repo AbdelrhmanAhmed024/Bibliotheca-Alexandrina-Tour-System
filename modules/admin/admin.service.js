@@ -23,6 +23,8 @@ class adminService {
     }
 
     async updateAdmin(id, data) {
+        if (data.password) delete data.password;
+
         const admin = await adminRepo.updateById(id, data);
         if (!admin) throw new AppError('Admin not found or can\'t be updated', 404);
         return admin;
