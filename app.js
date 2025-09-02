@@ -23,6 +23,7 @@ const visitorRoutes = require('./modules/visitor/visitor.routes');
 const adminRoutes = require('./modules/admin/admin.routes');
 const guideRoutes = require('./modules/guide/guide.routes');
 const reviewRoutes = require('./modules/review/review.routes');
+const bookingRoutes = require('./modules/booking/bookingRoutes');
 
 // MongoDB Connection Configuration
 const connectDB = async () => {
@@ -83,7 +84,7 @@ app.use('/api/visitors', visitorRoutes);
 app.use('/api/admins', adminRoutes);
 app.use('/api/guides', guideRoutes);
 app.use('/api/reviews', reviewRoutes);
-
+app.use('/api/bookings', bookingRoutes);
 // 404 handler
 app.all('*', (req, res, next) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
