@@ -68,34 +68,6 @@ class tourController {
         }
     }
 
-    bookTour = async (req, res, next) => {
-        try {
-            const tour = await TourService.bookTour(req.params.id, req.visitor.id);
-            res.status(200).json({
-                status: 'success',
-                data: {
-                    tour
-                }
-            });
-        } catch (error) {
-            next(error);
-        }
-    }
-
-    cancelBooking = async (req, res, next) => {
-        try {
-            const tour = await TourService.cancelBooking(req.params.id, req.visitor.id);
-            res.status(200).json({
-                status: 'success',
-                data: {
-                    tour
-                }
-            });
-        } catch (error) {
-            next(error);
-        }
-    }
-
     getAvailableTours = async (req, res, next) => {
         try {
             const tours = await TourService.getAllTours();

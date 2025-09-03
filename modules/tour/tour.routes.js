@@ -13,9 +13,6 @@ router.use(protect);
 // Routes for authenticated users
 router.get('/', tourController.getAllTours);
 
-// Visitor specific routes
-router.patch('/:id/book', restrictTo('visitor'), tourController.bookTour);
-router.patch('/:id/cancel', restrictTo('visitor'), tourController.cancelBooking);
 
 router.get('/my-tours', restrictTo('guide'), tourController.getMyTours);
 // Admin only routes

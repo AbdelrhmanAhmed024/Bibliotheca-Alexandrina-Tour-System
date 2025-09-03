@@ -79,65 +79,6 @@ class TourService {
         return deletedTour;
     }
 
-    async bookTour(tourId, visitorId) {
-        const tour = await this.getTourById(tourId);
-
-        if (tour.currentBookings >= tour.groupSize) {
-            throw new AppError('Tour is fully booked', 400);
-        }
-
-
-        const hasBooked = tour.bookedBy.some(bookingId => bookingId.toString() === visitorId.toString());
-        if (hasBooked) {
-            throw new AppError('You have already booked this tour', 400);
-        }
-
-        // Update the tour with new booking
-        const updatedTour = await tourRepo.updateById(tourId, {
-            $inc: { currentBookings: 1 },
-            $push: { bookedBy: visitorId }
-        });
-
-        if (!updatedTour) {
-            throw new AppError('Error booking tour', 400);
-        }
-
-        return updatedTour;
-    }
-
-    async cancelBooking(tourId, visitorId) {
-        const tour = await this.getTourById(tourId);
-
-        // Check if visitor has booked this tour using proper ObjectId comparison
-        const hasBooked = tour.bookedBy.some(bookingId => bookingId.toString() === visitorId.toString());
-        if (!hasBooked) {
-            throw new AppError('You have not booked this tour', 400);
-        }
-
-        // Use atomic operation to ensure consistency
-        const updatedTour = await tourRepo.updateById(
-            { _id: tourId },
-            {
-                $inc: { currentBookings: -1 },
-                $pull: { bookedBy: visitorId }
-            },
-            { new: true } // Return updated document
-        );
-
-        if (!updatedTour) {
-            throw new AppError('Error canceling booking', 400);
-        }
-
-        // Verify the update was successful
-        if (updatedTour.currentBookings < 0) {
-            // Reset to 0 if somehow went negative
-            await tourRepo.updateById(tourId, { currentBookings: 0 });
-            throw new AppError('Error with booking count, please contact support', 500);
-        }
-
-        return updatedTour;
-    }
-
     async assignGuide(tourId, guideId) {
         // Check if tour exists
         const tour = await this.getTourById(tourId);
