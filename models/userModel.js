@@ -12,7 +12,9 @@ const userSchema = new mongoose.Schema(
     },
     {
         discriminatorKey: "role",
-        timestamps: true
+        timestamps: true,
+        toJSON: { virtuals: true },   // 👈 add this
+        toObject: { virtuals: true }
     }
 );
 
@@ -34,6 +36,10 @@ userSchema.pre('save', function (next) {
     this.passwordChangedAt = new Date(Date.now() - 1000);
     next();
 });
+
+userSchema.methods.comparePassword = async function (candidatePassword, userPassword) {
+    return await bcrypt.compare(candidatePassword, userPassword);
+};
 
 const User = mongoose.model('User', userSchema);
 

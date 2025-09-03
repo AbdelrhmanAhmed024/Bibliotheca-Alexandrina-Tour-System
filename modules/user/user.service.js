@@ -46,10 +46,14 @@ class UserService {
         user.password = hashed;
         await user.save();
     };
-
+    async getMyData(userId) {
+        const user = await userRepo.findById(userId);
+        if (!user) throw new AppError("Couldn't find user with that id.", 404);
+        return user;
+    };
 
     async deleteUser(id) {
-        const user = await userRepo.deleteById(id);
+        const user = await userRepo.deleteUser(id);
         if (!user) throw new AppError("Couldn't delete user with that id.", 404);
         return user;
     };

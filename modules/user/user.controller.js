@@ -6,7 +6,13 @@ class UserController {
     getAll = async (req, res, next) => {
         try {
             const users = await userService.listUsers();
-            res.json(users);
+            res.json({
+                status: "success",
+                results: users.length,
+                data: {
+                    users
+                }
+            });
         } catch (e) {
             next(e);
         }
