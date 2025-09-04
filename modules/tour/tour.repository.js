@@ -12,7 +12,7 @@ class TourRepository {
     }
 
     async findById(id) {
-        return await tour.findById(id).lean();
+        return await tour.findById(id);
     }
 
     async create(data) {

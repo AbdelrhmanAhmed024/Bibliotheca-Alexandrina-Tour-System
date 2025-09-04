@@ -2,8 +2,8 @@ const User = require('./../../models/userModel.js');
 const { getMyData } = require('./user.controller.js');
 
 class UserRepository {
-    async findAll() { return User.find({}).select('-password').lean(); }
-    async findById(id) { return User.findById(id).select('-password').lean(); }
+    async findAll() { return User.find({}).select('-password'); }
+    async findById(id) { return User.findById(id).select('-password'); }
     async findRawById(id) { return User.findById(id); }
     async getMyData(userId) {
         return await User.findById(userId).select("-password").populate({ path: "bookings", populate: { path: "tour", select: "title date duration price", }, })
