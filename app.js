@@ -30,7 +30,6 @@ const userRoutes = require('./modules/user/user.routes');
 const connectDB = async () => {
     try {
         console.log('Attempting to connect to MongoDB...');
-        console.log('Connection string:', process.env.MONGODB_URI.replace(/:([^:@]{4})[^:@]*@/, ':****@')); // Log URI with hidden password
 
         const conn = await mongoose.connect(process.env.MONGODB_URI, {
             serverSelectionTimeoutMS: 30000,
@@ -40,7 +39,6 @@ const connectDB = async () => {
             w: 'majority'
         });
 
-        console.log(`MongoDB Connected: ${conn.connection.host}`);
         console.log('Database Name:', conn.connection.name);
         console.log('MongoDB Connection State:', conn.connection.readyState);
 
