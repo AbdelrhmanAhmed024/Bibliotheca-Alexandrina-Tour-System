@@ -1,45 +1,28 @@
 const reviewRepo = require('./review.repository');
 const tourRepo = require('../tour/tour.repository');
 const AppError = require('../utils/AppError');
+const Review = require('../../models/reviewModel');
+const Tour = require('../../models/tourModel');
 
 class ReviewService {
     async createReview(userId, tourId, rating, comment) {
-        // Get the tour to check if it has ended and if the user actually booked it
-        const tour = await tourRepo.findById(tourId);
-        if (!tour) {
-            throw new AppError('Tour not found', 404);
-        }
-
-        // Check if tour has ended
-        if (new Date(tour.Date) > new Date()) {
-            throw new AppError('Cannot review a tour that has not ended yet', 400);
-        }
-
-        // Check if user was actually on this tour
-        if (!tour.bookedBy.includes(userId)) {
-            throw new AppError('You can only review tours you have attended', 403);
-        }
-
-        // Check if user has already reviewed this tour
-        const existingReview = await reviewRepo.findByTourId(tourId);
-        const hasReviewed = existingReview.some(review => review.user._id.toString() === userId);
-        if (hasReviewed) {
-            throw new AppError('You have already reviewed this tour', 400);
-        }
-
-        // Create the review
         const review = await reviewRepo.create({
             user: userId,
             tour: tourId,
             rating,
             comment
         });
+        if (!review) {
+            throw new AppError('Failed to create review', 500);
+        }
 
-        // Update tour ratings
-        await reviewRepo.updateTourRatings(tourId);
+        await Review.calcAverageRatings(tourId);
+        const tour = await Tour.findById(tourId);
+        console.log(tour.AvgRatings, tour.numberOfRatings);
 
         return review;
     }
+
 
     async getAllReviews() {
         return reviewRepo.getAll();

@@ -69,6 +69,11 @@ const tourSchema = new mongoose.Schema({
     toJSON: { virtuals: true },
     toObject: { virtuals: true }
 });
+tourSchema.virtual('reviews', {
+    ref: 'Review',
+    foreignField: 'tour',
+    localField: '_id'
+});
 
 const Tour = mongoose.model("Tour", tourSchema);
 module.exports = Tour;

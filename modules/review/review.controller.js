@@ -40,7 +40,7 @@ class ReviewController {
 
     getAllReviews = async (req, res, next) => {
         try {
-            const reviews = await reviewService.asyncgetAllReviews();
+            const reviews = await reviewService.getAllReviews();
             res.status(200).json({
                 status: 'success',
                 reviewsCount: reviews.length,

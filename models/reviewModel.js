@@ -9,10 +9,12 @@ const reviewSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now }
 });
 
-// دالة حساب الاحصائيات
 reviewSchema.statics.calcAverageRatings = async function (tourId) {
+    const mongoose = require("mongoose");
+    const Tour = require("./tourModel");
+
     const stats = await this.aggregate([
-        { $match: { tour: tourId } },
+        { $match: { tour: new mongoose.Types.ObjectId(tourId) } },
         {
             $group: {
                 _id: "$tour",
@@ -24,7 +26,7 @@ reviewSchema.statics.calcAverageRatings = async function (tourId) {
 
     if (stats.length > 0) {
         await Tour.findByIdAndUpdate(tourId, {
-            AvgRatings: Math.round(stats[0].avgRating * 10) / 10,
+            AvgRatings: stats[0].avgRating,
             numberOfRatings: stats[0].numRatings
         });
     } else {
@@ -35,13 +37,40 @@ reviewSchema.statics.calcAverageRatings = async function (tourId) {
     }
 };
 
-// بعد ما الريفيو يتسجل
+reviewSchema.post('save', async function () {
+    const Review = this.constructor;
+    const Tour = require('./tourModel');
+
+    const stats = await Review.aggregate([
+        { $match: { tour: this.tour } },
+        {
+            $group: {
+                _id: '$tour',
+                avgRating: { $avg: '$rating' },
+                nRating: { $sum: 1 }
+            }
+        }
+    ]);
+
+    if (stats.length > 0) {
+        await Tour.findByIdAndUpdate(this.tour, {
+            AvgRatings: stats[0].avgRating,
+            numberOfRatings: stats[0].nRating
+        });
+    } else {
+        await Tour.findByIdAndUpdate(this.tour, {
+            AvgRatings: 0,
+            numberOfRatings: 0
+        });
+    }
+});
+
 reviewSchema.post("save", function () {
     this.constructor.calcAverageRatings(this.tour);
 });
 
-// بعد ما الريفيو يتمسح (استخدم Review مش doc.constructor)
-reviewSchema.post("findOneAndDelete", async function (doc) {
+// بعد update أو delete
+reviewSchema.post(/^findOneAnd/, async function (doc) {
     if (doc) {
         await mongoose.model("Review").calcAverageRatings(doc.tour);
     }

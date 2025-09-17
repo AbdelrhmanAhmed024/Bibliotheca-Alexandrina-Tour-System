@@ -11,7 +11,7 @@ router.get('/:id/details', tourController.getTourById);
 router.use(protect);
 
 // Routes for authenticated users
-router.get('/', tourController.getAllTours);
+router.get('/', restrictTo('admin'), tourController.getAllTours);
 
 
 router.get('/my-tours', restrictTo('guide'), tourController.getMyTours);
